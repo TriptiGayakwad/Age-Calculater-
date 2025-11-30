@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator - Manual Tests</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Age Calculator - Manual Integration Tests</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Validation - Empty Input</h2>
+        <div id="test1" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Validation - Future Date</h2>
+        <div id="test2" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Age Calculation - Known Date</h2>
+        <div id="test3" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Number Formatting</h2>
+        <div id="test4" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 5: Total Months Consistency</h2>
+        <div id="test5" class="test-result"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Test 1: Empty input validation
+        function test1() {
+            const result = validateBirthDate('');
+            const pass = !result.valid && result.error === 'Please select your birth date';
+            document.getElementById('test1').className = 'test-result ' + (pass ? 'pass' : 'fail');
+            document.getElementById('test1').textContent = pass ? 
+                '✓ PASS: Empty input correctly rejected' : 
+                '✗ FAIL: Empty input validation failed';
+        }
+        
+        // Test 2: Future date validation
+        function test2() {
+            const futureDate = new Date();
+            futureDate.setFullYear(futureDate.getFullYear() + 1);
+            const futureDateString = futureDate.toISOString().split('T')[0];
+            const result = validateBirthDate(futureDateString);
+            const pass = !result.valid && result.error === 'Birth date cannot be in the future';
+            document.getElementById('test2').className = 'test-result ' + (pass ? 'pass' : 'fail');
+            document.getElementById('test2').textContent = pass ? 
+                '✓ PASS: Future date correctly rejected' : 
+                '✗ FAIL: Future date validation failed';
+        }
+        
+        // Test 3: Age calculation accuracy
+        function test3() {
+            // Test with a known date: January 1, 2000
+            const birthDate = new Date('2000-01-01');
+            const currentDate = new Date('2024-11-29');
+            const age = calculateAge(birthDate, currentDate);
+            
+            // Expected: 24 years, 10 months, 28 days
+            const pass = age.years === 24 && age.months === 10 && age.days === 28;
+            document.getElementById('test3').className = 'test-result ' + (pass ? 'pass' : 'fail');
+            document.getElementById('test3').textContent = pass ? 
+                `✓ PASS: Age calculated correctly (${age.years}y ${age.months}m ${age.days}d)` : 
+                `✗ FAIL: Expected 24y 10m 28d, got ${age.years}y ${age.months}m ${age.days}d`;
+        }
+        
+        // Test 4: Number formatting
+        function test4() {
+            const formatted1 = formatNumber(1234);
+            const formatted2 = formatNumber(999);
+            const pass = formatted1.includes(',') && !formatted2.includes(',');
+            document.getElementById('test4').className = 'test-result ' + (pass ? 'pass' : 'fail');
+            document.getElementById('test4').textContent = pass ? 
+                `✓ PASS: Numbers formatted correctly (1234 → ${formatted1}, 999 → ${formatted2})` : 
+                `✗ FAIL: Number formatting incorrect`;
+        }
+        
+        // Test 5: Total months consistency
+        function test5() {
+            const birthDate = new Date('2000-01-01');
+            const currentDate = new Date('2024-11-29');
+            const age = calculateAge(birthDate, currentDate);
+            const expectedTotalMonths = (age.years * 12) + age.months;
+            const pass = age.totalMonths === expectedTotalMonths;
+            document.getElementById('test5').className = 'test-result ' + (pass ? 'pass' : 'fail');
+            document.getElementById('test5').textContent = pass ? 
+                `✓ PASS: Total months consistent (${age.totalMonths} months)` : 
+                `✗ FAIL: Total months inconsistent`;
+        }
+        
+        // Run all tests
+        test1();
+        test2();
+        test3();
+        test4();
+        test5();
+    </script>
+</body>
+</html>
